@@ -102,7 +102,76 @@ public class BST {
         return output;
     }
     
+    public boolean remove (Cargo dataToRemove)
+    {
+        remove(root, dataToRemove);
+        return !(search(root, dataToRemove));
+    }
     
+    private TreeNode remove (TreeNode rootNode, Cargo dataToRemove)
+    {
+        if (root == null)
+            return null;
+        if (!search(root, dataToRemove))
+            return null;
+        
+        Cargo rootData = rootNode.getData();
+        int comparison = dataToRemove.compareTo(rootData);
+        
+        if (comparison < 0)
+            {
+                TreeNode leftNode = rootNode.getLeft();
+                TreeNode subtreeRoot = remove(leftNode, dataToRemove);
+                rootNode.setLeft(subtreeRoot);
+            }
+        else if (comparison > 0)
+        {
+            TreeNode rightNode = rootNode.getRight();
+            rootNode.setRight(remove(rightNode, dataToRemove));
+        }
+        else
+        {
+            rootNode = removeFromRoot(rootNode);
+        }
+        return rootNode;
+    }
+    
+    private TreeNode findLargest (TreeNode rootNode)
+    {
+        if (rootNode.getRight() != null)
+            rootNode = findLargest(rootNode.getRight());
+        return rootNode;
+    }
+    
+    private TreeNode removeFromRoot (TreeNode rootNode)
+    {
+        if ((rootNode.getLeft() != null) && rootNode.getRight() != null)
+        {
+            TreeNode leftSubtreeRoot = rootNode.getLeft();
+            TreeNode largestNode = findLargest(rootNode.getLeft());
+            rootNode.setData(largestNode.getData());
+            rootNode.setLeft(removeLargest(leftSubtreeRoot));
+        }
+        else if (rootNode.getRight() != null)
+            rootNode = rootNode.getRight();
+        else
+            rootNode = rootNode.getLeft();
+        return rootNode;
+    }
+    
+    private TreeNode removeLargest (TreeNode rootNode)
+    {
+        if (rootNode.getRight() != null)
+        {
+            TreeNode rightNode = rootNode.getRight();
+            rightNode = removeLargest(rightNode);
+            rootNode.setRight(rightNode);
+        }
+        else
+            rootNode = rootNode.getLeft();
+        
+        return rootNode;
+    }
     
     private class TreeNode
     {

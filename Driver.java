@@ -81,6 +81,7 @@ public class Driver
         boolean found = aBST.contains(forSearch);
         end = System.nanoTime();
         System.out.println("If the target is found? " + found + "\nSearching the BST took: " + (end - start) + " nano seconds.");
+        System.out.println("If the target is removed? " + aBST.remove(forSearch));
         
     }
 
