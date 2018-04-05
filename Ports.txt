@@ -1,0 +1,10 @@
+Winnipeg%true%true%true%true
+Dublin%true%true%false%false
+Beverly Hills%false%false%true%true
+London%true%true%false%false
+Barcelona%true%true%false%false
+New York%true%true%true%true
+Wichita%false%true%true%true
+Grand Forks%false%true%true%true
+Ely%false%false%false%true
+St. Theresa Point%false%false%false%false
