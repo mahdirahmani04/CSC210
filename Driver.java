@@ -7,6 +7,110 @@ public class Driver
 
     public static void main(String[] args)
     {
+        File transFile = new File("Ports.txt");
+        Scanner inputPorter = null;
+         try
+         {
+              inputPorter = new Scanner(transFile);
+         }
+         catch (FileNotFoundException e)
+         {
+              System.err.println(e.getMessage());
+              System.err.println("The Transporters.txt file is not in the current directory!  Exiting Program!");
+         }
+
+         ArrayList<Transporter> myPorters = new ArrayList<Transporter>();
+
+         String line;
+         String[] parts;
+         Transporter st = null;
+         while(inputPorter.hasNext())
+         {
+              line = inputPorter.nextLine();
+              parts = line.split("%");
+              try
+              {
+                   if (parts[0].equals("SHIP"))
+                        myPorters.add(new Ship(parts[1], Double.parseDouble(parts[2]), Integer.parseInt(parts[3]), Integer.parseInt(parts[4])));
+                   else if (parts[0].equals("AIRPLANE"))
+                        myPorters.add(new Airplane(parts[1], Double.parseDouble(parts[2]), Integer.parseInt(parts[3]), Integer.parseInt(parts[4]), Boolean.parseBoolean(parts[5])));
+                   else if (parts[0].equals("TRAIN"))
+                        myPorters.add(new Train(parts[1], Double.parseDouble(parts[2]), Integer.parseInt(parts[3]), Integer.parseInt(parts[4]), Integer.parseInt(parts[5])));
+                   else if (parts[0].equals("SEMITRUCK"))
+                   {
+                        st = new SemiTruck(parts[1], Double.parseDouble(parts[2]), Integer.parseInt(parts[3]), Integer.parseInt(parts[4]), Integer.parseInt(parts[5]));
+                        myPorters.add(st);
+                        
+                   }
+              }
+              catch (BadDataException e)
+              {
+                   System.err.println(e.getMessage());
+              }
+
+         }
+         inputPorter.close();
+         
+         File portsFile = new File("Ports.txt");
+         
+         
+         Scanner inputPorts = null;
+         try
+         {
+              inputPorts = new Scanner(portsFile);
+         }
+         catch (FileNotFoundException e)
+         {
+              System.err.println(e.getMessage());
+              System.err.println("The Ports.txt file is not in the current directory!  Exiting Program!");
+         }
+
+         ArrayList<Port> myPorts = new ArrayList<Port>();
+
+         Port pt = null;
+         while(inputPorts.hasNext())
+         {
+              line = inputPorts.nextLine();
+              parts = line.split("%");
+                        pt = new Port(parts[0],Boolean.valueOf(parts[1]),Boolean.valueOf(parts[2]),Boolean.valueOf(parts[3]),Boolean.valueOf(parts[4]));
+                        myPorts.add(pt);
+
+         }
+         inputPorts.close();
+         
+         String[] Dest = new String[10];
+         Dest[0] = "Winnipeg";
+         Dest[1] = "Dublin";
+         Dest[2] = "Beverly Hills";
+         Dest[3] = "London";
+         Dest[4] = "Barcelona";
+         Dest[5] = "New York";
+         Dest[6] = "Wichita";
+         Dest[7] = "Grand Forks";
+         Dest[8] = "Ely";
+         Dest[9] = "St. Theresa Point";
+         
+         Random rng = new Random();
+         for (Port p : myPorts)
+         {
+             for (int i=0; i<100; i++)
+             {
+                 try {
+                     p.addOutbound(new Cargo(Dest[rng.nextInt(10)], rng.nextDouble()*10000));
+                 } catch (BadDataException ex) {
+                     Logger.getLogger(Driver.class.getName()).log(Level.SEVERE, null, ex);
+                 }
+             }
+         }
+         
+        for (Transporter t: myPorters)
+        {
+            t.setLocation(Dest[rng.nextInt(10)]);
+        }
+    }
+    /*
+    public static void main(String[] args)
+    {
          //Create a link to an input file
          File transFile = new File("Transporters.txt");
          
@@ -345,4 +449,5 @@ public class Driver
         
   
     }
+*/
 }
