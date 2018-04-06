@@ -78,35 +78,71 @@ public class Driver
          }
          inputPorts.close();
          
-         String[] Dest = new String[10];
-         Dest[0] = "Winnipeg";
-         Dest[1] = "Dublin";
-         Dest[2] = "Beverly Hills";
-         Dest[3] = "London";
-         Dest[4] = "Barcelona";
-         Dest[5] = "New York";
-         Dest[6] = "Wichita";
-         Dest[7] = "Grand Forks";
-         Dest[8] = "Ely";
-         Dest[9] = "St. Theresa Point";
-         
          Random rng = new Random();
-         for (Port p : myPorts)
-         {
+         myPorts.forEach((p) -> {
              for (int i=0; i<100; i++)
              {
                  try {
-                     p.addOutbound(new Cargo(Dest[rng.nextInt(10)], rng.nextDouble()*10000));
+                     p.addOutbound(new Cargo(myPorts.get(rng.nextInt(10)).getName(), rng.nextDouble()*10000));
                  } catch (BadDataException ex) {
                      Logger.getLogger(Driver.class.getName()).log(Level.SEVERE, null, ex);
                  }
              }
-         }
+        });
          
-        for (Transporter t: myPorters)
-        {
-            t.setLocation(Dest[rng.nextInt(10)]);
-        }
+         myPorters.forEach((t) -> {
+             t.setLocation(myPorts.get(rng.nextInt(10)));
+        });
+         
+         int days = 1;
+         double totalOutBound = 0;
+         
+         System.out.println("\n\nSTARTING DAY " + days + "\n\n");
+         for (Transporter t: myPorters)
+         {
+            try {
+                t.getLocation().load();
+            } catch (FacilitiesMismatchException ex) {
+                Logger.getLogger(Driver.class.getName()).log(Level.SEVERE, null, ex);
+            }
+         }
+         days++;
+         
+         do
+         {
+             System.out.println("\n\nSTARTING DAY " + days + "\n\n");
+             for (Transporter t: myPorters)
+             {
+                 if (t.getDistance() == 0)
+                 {     
+                    try {
+                        t.getLocation().load();
+                    } catch (FacilitiesMismatchException ex) {
+                        Logger.getLogger(Driver.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                 }
+                 try {
+                     t.travel();
+                 } catch (BadDataException ex) {
+                     Logger.getLogger(Driver.class.getName()).log(Level.SEVERE, null, ex);
+                 } catch (BrokeDownException ex) {
+                     Logger.getLogger(Driver.class.getName()).log(Level.SEVERE, null, ex);
+                 }
+                 if (t.getDistance() == 0)
+                 {
+                     try {
+                         t.getLocation().unloadAll();
+                     } catch (FacilitiesMismatchException ex) {
+                         Logger.getLogger(Driver.class.getName()).log(Level.SEVERE, null, ex);
+                     }
+                 }
+                 days++;
+                 for (Port p: myPorts)
+                    {
+                        totalOutBound += p.getOutboundTonnage();
+                    }
+             }
+         } while (totalOutBound == 0);
     }
     /*
     public static void main(String[] args)

@@ -11,7 +11,7 @@ public abstract class Transporter implements Traveller, Comparable
     private int myID; //equals()
     private static int nextID = 0;
     private boolean replaced = false;
-    private String location = "";
+    private Port location;
     
     public abstract boolean broken();
     public abstract void emergency() throws BrokeDownException;
@@ -294,11 +294,11 @@ public abstract class Transporter implements Traveller, Comparable
          return output;
     }
 
-    public String getLocation() {
+    public Port getLocation() {
         return location;
     }
 
-    public void setLocation(String location) {
+    public void setLocation(Port location) {
         this.location = location;
     }
     
