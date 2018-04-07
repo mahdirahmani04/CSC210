@@ -9,6 +9,7 @@ public class Port
     private static int nextID = 0;
     private boolean[] access = {false, false, false, false}; //0-Harbour//1-Airport//2-TrainDepot//3-TruckYard
     private Queue<Transporter> visitors = new LinkedList<Transporter>();
+    private boolean ProcessingCargo = false;
 
     public void enterPort(Transporter visitor) throws FacilitiesMismatchException
     {
@@ -282,5 +283,24 @@ public class Port
               }
          }
          
+    }
+    
+    public void oneDayIsGone ()
+    {
+        this.ProcessingCargo = false;
+    }
+    
+    public void onePorterOneDay ()
+    {
+        this.ProcessingCargo = true;
+    }
+
+    public boolean isProcessingCargo() {
+        return ProcessingCargo;
+    }
+    
+    public boolean isFirstPorter (Transporter target)
+    {
+        return target.equals(visitors.peek());
     }
 }

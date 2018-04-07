@@ -83,12 +83,24 @@ public class Driver
              for (int i=0; i<100; i++)
              {
                  try {
-                     p.addOutbound(new Cargo(myPorts.get(rng.nextInt(10)).getName(), rng.nextDouble()*10000));
+                     p.addOutbound(new Cargo(myPorts.get(rng.nextInt(10)).getName(), rng.nextDouble()*1000));
                  } catch (BadDataException ex) {
                      Logger.getLogger(Driver.class.getName()).log(Level.SEVERE, null, ex);
                  }
              }
         });
+         
+         String[] Dest = new String[10];
+         Dest[0] = "Winnipeg";
+         Dest[1] = "Dublin";
+         Dest[2] = "Beverly Hills";
+         Dest[3] = "London";
+         Dest[4] = "Barcelona";
+         Dest[5] = "New York";
+         Dest[6] = "Wichita";
+         Dest[7] = "Grand Forks";
+         Dest[8] = "Ely";
+         Dest[9] = "St. Theresa Point";
          
          myPorters.forEach((t) -> {
              t.setLocation(myPorts.get(rng.nextInt(10)));
@@ -101,26 +113,30 @@ public class Driver
          for (Transporter t: myPorters)
          {
             try {
+                t.getLocation().enterPort(t);
                 t.getLocation().load();
+                t.nextDest();
+                t.getLocation().leavePort();
             } catch (FacilitiesMismatchException ex) {
                 Logger.getLogger(Driver.class.getName()).log(Level.SEVERE, null, ex);
             }
          }
          days++;
+         for (Transporter t: myPorters)
+             {
+                 System.out.println(t.toString());
+             }
+         
+         for (Port p: myPorts)
+                {
+                    System.out.println(p.toString());
+                }
          
          do
          {
              System.out.println("\n\nSTARTING DAY " + days + "\n\n");
              for (Transporter t: myPorters)
              {
-                 if (t.getDistance() == 0)
-                 {     
-                    try {
-                        t.getLocation().load();
-                    } catch (FacilitiesMismatchException ex) {
-                        Logger.getLogger(Driver.class.getName()).log(Level.SEVERE, null, ex);
-                    }
-                 }
                  try {
                      t.travel();
                  } catch (BadDataException ex) {
@@ -128,21 +144,51 @@ public class Driver
                  } catch (BrokeDownException ex) {
                      Logger.getLogger(Driver.class.getName()).log(Level.SEVERE, null, ex);
                  }
-                 if (t.getDistance() == 0)
+                 if (t.getDistance() == 0 && t.getCurrentCargoTonnage() > 0)
                  {
-                     try {
-                         t.getLocation().unloadAll();
-                     } catch (FacilitiesMismatchException ex) {
-                         Logger.getLogger(Driver.class.getName()).log(Level.SEVERE, null, ex);
+                     if (!t.getLocation().getName().equals(t.getDest()))
+                     {
+                        for (int i=0; i<10; i++)
+                        {
+                            if (t.getDest().equals(Dest[i]))
+                                t.setLocation(myPorts.get(i));
+                        }
+                        try {
+                            t.getLocation().enterPort(t);
+                        } catch (FacilitiesMismatchException ex) {
+                            Logger.getLogger(Driver.class.getName()).log(Level.SEVERE, null, ex);
+                        }
+                     }   
+                     if (!t.getLocation().isProcessingCargo() && t.getLocation().isFirstPorter(t))
+                     {
+                        try {
+                            t.getLocation().onePorterOneDay();
+                            t.getLocation().unload();
+                            t.getLocation().load();
+                            t.nextDest();
+                            t.setDistance(rng.nextInt(6575) + 1);
+                            t.getLocation().leavePort();
+                        } catch (FacilitiesMismatchException ex) {
+                            Logger.getLogger(Driver.class.getName()).log(Level.SEVERE, null, ex);
+                        } catch (BadDataException ex) {
+                            Logger.getLogger(Driver.class.getName()).log(Level.SEVERE, null, ex);
+                        }
                      }
                  }
-                 days++;
-                 for (Port p: myPorts)
-                    {
-                        totalOutBound += p.getOutboundTonnage();
-                    }
+             }     
+             days++;
+             for (Transporter t: myPorters)
+             {
+                 System.out.println(t.toString());
              }
-         } while (totalOutBound == 0);
+             for (Port p: myPorts)
+                {
+                    p.oneDayIsGone();
+                    totalOutBound += p.getOutboundTonnage();
+                    System.out.println(p.toString());
+                }
+             
+         } while (totalOutBound != 0);
     }
     /*
     public static void main(String[] args)
