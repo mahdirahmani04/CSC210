@@ -2,6 +2,11 @@ import java.util.*; // Need Random
 import java.io.*; //Need File IO Tools
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
+/**
+ * Ports and transporters
+ * @author Zishuo Li, Bobby Chan Yang, Pingchen Wu
+ */
 public class Driver
 {
 
@@ -189,6 +194,19 @@ public class Driver
                 }
              
          } while (totalOutBound != 0);
+         
+         /* ********************************************************************
+         1. We used I/O methods to read from text files and used two ArrayList to
+            load all ports and transporters objects (the same code in the former
+            driver). We used loops to create 100 Cargo at each port and assign a current
+            location for each transporter. The logic we run here for getting transporters
+            transfering cargo between ports is: travel() -> check if arrived at destination ->
+            enter port -> unload -> load -> leave. Using a do while statement to 
+            let all transporters be running until the total ounbound cargo tonnage for
+            all ports is zero.
+         2. Our code doesn't work well. Ports are not loading cargo to their
+            local stack. It's an infinite loop. Not really know which step is wrong.
+         */
     }
     /*
     public static void main(String[] args)
