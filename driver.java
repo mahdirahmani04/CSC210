@@ -15,6 +15,8 @@ public class driver {
      */
     public static void main(String[] args) {
         // TODO code application logic here
+        int test = (int) (Math.log(31) / Math.log(2));
+        System.out.println(test);
     }
     
 }
